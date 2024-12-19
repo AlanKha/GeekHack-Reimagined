@@ -24,11 +24,11 @@ export default function RootLayout({
 
   return (
     <ClerkProvider>
-      <html lang="en" className={`${GeistSans.variable}`}>
+      <html lang="en" className={`${GeistSans.variable} bg-black text-white`}>
         <body>
           <TopNav />
           <div className="flex">
-            <SideBar/>
+            <SideBar />
             <div className="flex-grow">{children}</div>
           </div>
         </body>
