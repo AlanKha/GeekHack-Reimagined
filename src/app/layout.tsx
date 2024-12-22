@@ -21,7 +21,6 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-
   return (
     <ClerkProvider>
       <html lang="en" className={`${GeistSans.variable} bg-black text-white`}>
@@ -29,7 +28,9 @@ export default function RootLayout({
           <TopNav />
           <div className="flex">
             <SideBar />
-            <div className="flex-grow">{children}</div>
+            <div className="flex min-h-screen flex-grow flex-col items-center p-40 bg-black text-secondary">
+              {children}
+            </div>
           </div>
         </body>
       </html>
