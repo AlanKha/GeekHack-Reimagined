@@ -16,7 +16,7 @@ export default async function SideBar() {
           {categories.map((category) => (
             <li key={category.id}>
               <Link
-                href={`/${category.name.toLowerCase()}`}
+                href={`/${category.url}`}
                 className={
                   "block rounded-md px-3 py-2 transition-colors duration-200 ease-in-out hover:bg-secondary"
                 }

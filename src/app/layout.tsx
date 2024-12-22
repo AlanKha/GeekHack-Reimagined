@@ -28,7 +28,7 @@ export default function RootLayout({
           <TopNav />
           <div className="flex">
             <SideBar />
-            <div className="flex min-h-screen flex-grow flex-col items-center p-40 bg-black text-secondary">
+            <div className="flex min-h-screen flex-grow flex-col px-16 p-8 bg-black text-secondary">
               {children}
             </div>
           </div>
