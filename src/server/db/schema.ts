@@ -21,9 +21,10 @@ export const categories = createTable("category", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-    () => new Date(),
-  ),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .$onUpdate(() => new Date())
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });
 
 export const posts = createTable(
@@ -31,6 +32,7 @@ export const posts = createTable(
   {
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
     title: varchar("title", { length: 256 }).notNull(),
+    description: text("description"),
     content: text("content").notNull(),
     categoryId: integer("category_id")
       .references(() => categories.id)
@@ -44,9 +46,10 @@ export const posts = createTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .$onUpdate(() => new Date())
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
   },
   (posts) => ({
     nameIndex: index("name_idx").on(posts.title),
@@ -67,9 +70,10 @@ export const users = createTable("user", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-    () => new Date(),
-  ),
+  updatedAt: timestamp("updated_at", { withTimezone: true })
+    .$onUpdate(() => new Date())
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
 });
 
 export const comments = createTable(
@@ -87,9 +91,10 @@ export const comments = createTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date(),
-    ),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .$onUpdate(() => new Date())
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
   },
   (comments) => ({
     postIndex: index("comment_post_idx").on(comments.postId),
@@ -115,6 +120,10 @@ export const votes = createTable(
     commentId: integer("comment_id").references(() => comments.id),
     isUpvote: boolean("is_upvote").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .$onUpdate(() => new Date())
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
   },

@@ -8,6 +8,7 @@ export default {
       colors: {
         primary: '#f04c2c',
         secondary: '#e9492b',
+        content: '#232323'
       },
       fontFamily: {
         sans: ["var(--font-geist-sans)", ...fontFamily.sans],
