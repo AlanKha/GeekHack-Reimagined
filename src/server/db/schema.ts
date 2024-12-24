@@ -7,7 +7,6 @@ import {
   varchar,
   text,
   boolean,
-  unique,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -18,6 +17,7 @@ export const categories = createTable("category", {
   name: varchar("name", { length: 256 }).notNull().unique(),
   url: varchar("url", { length: 1024 }).notNull(),
   description: text("description"),
+  postCount: integer("post_count").default(0).notNull(),
   createdAt: timestamp("created_at", { withTimezone: true })
     .default(sql`CURRENT_TIMESTAMP`)
     .notNull(),
@@ -41,6 +41,7 @@ export const posts = createTable(
       .references(() => users.id)
       .notNull(), // Link to user who created the post
     url: varchar("url", { length: 1024 }).notNull(),
+    commentCount: integer("comment_count").default(0).notNull(),
     isSticky: boolean("is_sticky").default(false),
     isClosed: boolean("is_closed").default(false),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -108,32 +109,3 @@ export const commentRelations = relations(comments, ({ one }) => ({
     references: [comments.id],
   }),
 }));
-
-export const votes = createTable(
-  "vote",
-  {
-    id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-    userId: integer("user_id")
-      .references(() => users.id)
-      .notNull(),
-    postId: integer("post_id").references(() => posts.id),
-    commentId: integer("comment_id").references(() => comments.id),
-    isUpvote: boolean("is_upvote").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .$onUpdate(() => new Date())
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-  },
-  (votes) => ({
-    uniqueVote: unique("unique_vote").on(
-      votes.userId,
-      votes.postId,
-      votes.commentId,
-    ),
-    postIndex: index("vote_post_idx").on(votes.postId),
-    commentIndex: index("vote_comment_idx").on(votes.commentId),
-  }),
-);

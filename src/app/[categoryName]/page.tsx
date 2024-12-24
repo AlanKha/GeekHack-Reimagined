@@ -1,5 +1,6 @@
 import { getPostsFromCategory } from "~/server/db/queries";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 
 export default async function CategoryPage({
   params,
@@ -16,7 +17,7 @@ export default async function CategoryPage({
         <h1 className="mb-6 text-2xl font-bold">Posts</h1>
         {posts.length > 0 ? (
           <div className="overflow-x-auto rounded-lg">
-            <table className="bg-content w-full border-collapse">
+            <table className="w-full border-collapse bg-content">
               <thead className="border-b border-gray-300">
                 <tr>
                   <th className="border-r px-6 py-3 text-left text-sm font-semibold">
@@ -26,7 +27,7 @@ export default async function CategoryPage({
                     Description
                   </th>
                   <th className="border-r px-6 py-3 text-left text-sm font-semibold">
-                    Replies / Views
+                    Replies
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">
                     Last Updated
@@ -36,14 +37,20 @@ export default async function CategoryPage({
               <tbody className="divide-y divide-gray-200">
                 {posts.map((post) => (
                   <tr key={post.id} className="">
-                    <td className="border-r whitespace-nowrap px-6 py-4 text-sm">
-                      {post.title}
-                    </td>
-                    <td className="border-r px-6 py-4 text-sm">{post.content}</td>
-                    <td className="border-r whitespace-nowrap px-6 py-4 text-sm">...</td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm">
-                      {post.updatedAt.toLocaleString()}
-                    </td>
+                    <Link href={`/${categoryName}/${post.url}`}>
+                      <td className="whitespace-nowrap border-r px-6 py-4 text-sm">
+                        {post.title}
+                      </td>
+                      <td className="border-r px-6 py-4 text-sm">
+                        {post.content}
+                      </td>
+                      <td className="whitespace-nowrap border-r px-6 py-4 text-sm">
+                        {post.commentCount}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm">
+                        {post.updatedAt.toLocaleString()}
+                      </td>
+                    </Link>
                   </tr>
                 ))}
               </tbody>
