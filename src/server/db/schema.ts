@@ -32,7 +32,6 @@ export const posts = createTable(
   {
     id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
     title: varchar("title", { length: 256 }).notNull(),
-    description: text("description"),
     content: text("content").notNull(),
     categoryId: integer("category_id")
       .references(() => categories.id)
@@ -42,6 +41,7 @@ export const posts = createTable(
       .notNull(), // Link to user who created the post
     url: varchar("url", { length: 1024 }).notNull(),
     commentCount: integer("comment_count").default(0).notNull(),
+    viewCount: integer("view_count").default(0).notNull(),
     isSticky: boolean("is_sticky").default(false),
     isClosed: boolean("is_closed").default(false),
     createdAt: timestamp("created_at", { withTimezone: true })
@@ -51,6 +51,9 @@ export const posts = createTable(
       .$onUpdate(() => new Date())
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
+    updatedBy: integer("updated_by")
+      .references(() => users.id)
+      .notNull(),
   },
   (posts) => ({
     nameIndex: index("name_idx").on(posts.title),
@@ -58,24 +61,42 @@ export const posts = createTable(
   }),
 );
 
-export const users = createTable("user", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
-  username: varchar("username", { length: 256 }).notNull().unique(),
-  userId: varchar("user_id", { length: 256 }).notNull().unique(), // Clerk UID
-  email: varchar("email", { length: 256 }).unique(),
-  displayName: varchar("display_name", { length: 256 }),
-  bio: text("bio"),
-  avatarUrl: varchar("avatar_url", { length: 1024 }),
-  isAdmin: boolean("is_admin").default(false),
-  isBanned: boolean("is_banned").default(false),
-  createdAt: timestamp("created_at", { withTimezone: true })
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true })
-    .$onUpdate(() => new Date())
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-});
+export const postRelations = relations(posts, ({ one }) => ({
+  creator: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+  updater: one(users, {
+    fields: [posts.updatedBy],
+    references: [users.id],
+  }),
+}));
+
+export const users = createTable(
+  "user",
+  {
+    id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+    username: varchar("username", { length: 256 }).notNull().unique(),
+    userId: varchar("user_id", { length: 256 }).notNull().unique(), // Clerk UID
+    email: varchar("email", { length: 256 }).unique(),
+    displayName: varchar("display_name", { length: 256 }),
+    bio: text("bio"),
+    avatarUrl: varchar("avatar_url", { length: 1024 }),
+    isAdmin: boolean("is_admin").default(false),
+    isBanned: boolean("is_banned").default(false),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .$onUpdate(() => new Date())
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+  },
+  (users) => ({
+    usernameIndex: index("username_idx").on(users.username),
+    clerkIdIndex: index("clerk_id_idx").on(users.userId),
+  }),
+);
 
 export const comments = createTable(
   "comment",

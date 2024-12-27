@@ -18,46 +18,65 @@ export default async function CategoryPage({
         {posts.length > 0 ? (
           <div className="overflow-x-auto rounded-lg">
             <table className="w-full border-collapse bg-content">
-              <thead className="border-b border-gray-300">
+              <thead className="border-b border-gray-300 text-secondary">
                 <tr>
                   <th className="border-r px-6 py-3 text-left text-sm font-semibold">
-                    Title
+                    Sticky
                   </th>
                   <th className="border-r px-6 py-3 text-left text-sm font-semibold">
-                    Description
+                    Subject / Started by
                   </th>
                   <th className="border-r px-6 py-3 text-left text-sm font-semibold">
-                    Replies
+                    Replies / Views
                   </th>
                   <th className="px-6 py-3 text-left text-sm font-semibold">
-                    Last Updated
+                    Last Post
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {posts.map((post) => (
-                  <tr key={post.id} className="">
-                    <Link href={`/${categoryName}/${post.url}`}>
-                      <td className="whitespace-nowrap border-r px-6 py-4 text-sm">
-                        {post.title}
-                      </td>
-                      <td className="border-r px-6 py-4 text-sm">
-                        {post.content}
-                      </td>
-                      <td className="whitespace-nowrap border-r px-6 py-4 text-sm">
-                        {post.commentCount}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm">
-                        {post.updatedAt.toLocaleString()}
-                      </td>
-                    </Link>
+                  <tr key={post.id} className="group">
+                    <td className="border-r px-6 py-4 text-sm">
+                      {post.isSticky ? "T" : "F"}
+                    </td>
+                    <td className="whitespace-nowrap border-r px-6 py-4 text-sm">
+                      <div className="flex flex-col">
+                        <Link
+                          href={`/${categoryName}/${post.url}`}
+                          className="block text-primary hover:underline"
+                        >
+                          {post.title}
+                        </Link>
+                        <p>
+                          Started by{" "}
+                          {post.creator.displayName ?? post.creator.username}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap border-r px-6 py-4 text-sm">
+                      <div className="flex flex-col items-center">
+                        <div className="">{post.commentCount} Replies</div>
+                        <div className="">{post.viewCount} Views</div>
+                      </div>
+                    </td>
+                    <td className="whitespace-nowrap px-6 py-4 text-sm">
+                      <div className="flex flex-col">
+                        <div className="">
+                          {post.updatedAt.toLocaleString()}
+                        </div>
+                        <div className="">
+                          by {post.updater.displayName ?? post.updater.username}
+                        </div>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
         ) : (
-          <p className="py-4 text-center text-gray-500">No posts found</p>
+          <p className="py-4 text-center text-xl underline text-primary">No posts found</p>
         )}
       </div>
     );
