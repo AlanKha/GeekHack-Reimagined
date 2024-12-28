@@ -8,9 +8,11 @@
 - [x] Set up database
 - [x] Attach database to UI
 - [x] Add authentication
-- [ ] Add forum upload
+- [ ] Category Page routing
+- [ ] Post Page routing
+- [ ] Impliment new posts
+- [ ] Impliment commenting
+- [ ] Impliment analytics (views, likes, etc.)
 - [ ] Implement error management
-- [ ] Set up routing/forum page (parallel route)
-- [ ] Add delete button (with server actions)
-- [ ] Integrate analytics
-- [ ] Implement rate limiting
+- [ ] Add admin action buttons (with server actions)
+- [ ] Make it look good
