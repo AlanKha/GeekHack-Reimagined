@@ -10,9 +10,9 @@
 - [x] Add authentication
 - [ ] Category Page routing
 - [ ] Post Page routing
-- [ ] Impliment new posts
-- [ ] Impliment commenting
-- [ ] Impliment analytics (views, likes, etc.)
+- [ ] Implement new posts
+- [ ] Implement commenting
+- [ ] Implement analytics (views, likes, etc.)
 - [ ] Implement error management
 - [ ] Add admin action buttons (with server actions)
 - [ ] Make it look good
