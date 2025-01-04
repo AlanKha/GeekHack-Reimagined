@@ -38,7 +38,7 @@ export const posts = createTable(
       .notNull(),
     userId: integer("user_id")
       .references(() => users.id)
-      .notNull(), // Link to user who created the post
+      .notNull(),
     url: varchar("url", { length: 1024 }).notNull(),
     commentCount: integer("comment_count").default(0).notNull(),
     viewCount: integer("view_count").default(0).notNull(),

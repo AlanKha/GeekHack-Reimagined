@@ -1,6 +1,6 @@
 import { db } from "~/server/db";
 import { desc } from "drizzle-orm";
-import { posts } from "~/server/db/schema"; // Make sure to import your schema
+import { posts } from "~/server/db/schema";
 
 export async function getPostsFromCategory(categoryUrl: string) {
   const category = await db.query.categories.findFirst({
@@ -31,4 +31,38 @@ export async function getPostsFromCategory(categoryUrl: string) {
   });
 
   return result;
+}
+
+export async function getPost(categoryUrl: string, postUrl: string) {
+  const category = await db.query.categories.findFirst({
+    where: (category, { eq }) => eq(category.url, categoryUrl),
+  });
+
+  if (!category) {
+    throw new Error(`Category "${categoryUrl}" not found.`);
+  }
+
+  const post = await db.query.posts.findFirst({
+    where: (post, { and, eq }) => and(eq(post.categoryId, category.id), eq(post.url, postUrl)),
+    with: {
+      creator: {
+        columns: {
+          username: true,
+          displayName: true,
+        },
+      },
+      updater: {
+        columns: {
+          username: true,
+          displayName: true,
+        },
+      },
+    },
+  });
+
+  if (!post) {
+    throw new Error(`Post "${postUrl}" not found.`);
+  }
+
+  return post;  
 }
