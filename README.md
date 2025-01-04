@@ -8,7 +8,7 @@
 - [x] Set up database
 - [x] Attach database to UI
 - [x] Add authentication
-- [ ] Category Page routing
+- [X] Category Page routing
 - [ ] Post Page routing
 - [ ] Implement new posts
 - [ ] Implement commenting
