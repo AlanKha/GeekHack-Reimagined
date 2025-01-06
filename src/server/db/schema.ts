@@ -61,17 +61,6 @@ export const posts = createTable(
   }),
 );
 
-export const postRelations = relations(posts, ({ one }) => ({
-  creator: one(users, {
-    fields: [posts.userId],
-    references: [users.id],
-  }),
-  updater: one(users, {
-    fields: [posts.updatedBy],
-    references: [users.id],
-  }),
-}));
-
 export const users = createTable(
   "user",
   {
@@ -124,7 +113,27 @@ export const comments = createTable(
   }),
 );
 
+export const postRelations = relations(posts, ({ one, many }) => ({
+  creator: one(users, {
+    fields: [posts.userId],
+    references: [users.id],
+  }),
+  updater: one(users, {
+    fields: [posts.updatedBy],
+    references: [users.id],
+  }),
+  comments: many(comments),
+}));
+
 export const commentRelations = relations(comments, ({ one }) => ({
+  post: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
+  }),
+  user: one(users, {
+    fields: [comments.userId],
+    references: [users.id],
+  }),
   child: one(comments, {
     fields: [comments.parentCommentId],
     references: [comments.id],

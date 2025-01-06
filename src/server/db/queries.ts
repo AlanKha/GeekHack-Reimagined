@@ -32,7 +32,6 @@ export async function getPostsFromCategory(categoryUrl: string) {
 
   return result;
 }
-
 export async function getPost(categoryUrl: string, postUrl: string) {
   const category = await db.query.categories.findFirst({
     where: (category, { eq }) => eq(category.url, categoryUrl),
@@ -57,7 +56,30 @@ export async function getPost(categoryUrl: string, postUrl: string) {
           displayName: true,
         },
       },
-    },
+      comments: {
+        with: {
+          user: {
+            columns: {
+              username: true,
+              displayName: true,
+              avatarUrl: true,
+            },
+          },
+          child: {
+            with: {
+              user: {
+                columns: {
+                  username: true,
+                  displayName: true,
+                  avatarUrl: true,
+                }
+              }
+            }
+          }
+        },
+        orderBy: (comments, { desc }) => [desc(comments.createdAt)]
+      }
+    }
   });
 
   if (!post) {
