@@ -1,5 +1,5 @@
 import { getPost } from "~/server/db/queries";
-import CommentTile from  "~/app/_components/CommentTile";
+import Image from "next/image";
 
 export default async function PostPage({
   params,
@@ -12,15 +12,34 @@ export default async function PostPage({
 
   return (
     <div>
-      <h1>Category: {post.categoryId}</h1>
-      <h1>Post: {post.title}</h1>
-      <p>Content: {post.content}</p>
-      <p>Comments: {post.commentCount}</p>
-      <CommentTile />
+      {/* Post */}
+      <div className="flex bg-content p-4 my-8">
+        {/* Profile */}
+        <div className="w-40">
+          <p className="text-xl font-semibold text-primary">
+            {post.creator.displayName}
+          </p>
+          <p className="text-xs font-semibold">Thread Starter</p>
+          {post.creator.avatarUrl && (
+            <div className="relative h-32 w-32">
+              <Image
+                src={post.creator.avatarUrl}
+                fill
+                alt="Profile"
+                className="object-cover"
+              />
+            </div>
+          )}
+        </div>
+        {/* Content */}
+        <div className="grow">blue</div>
+      </div>
+
+      {/* Comments */}
       {post.comments.map((comment) => (
-        <div className="flex" key={comment.id}>
-          <p>{comment.content}</p>
-          <p>By: {comment.userId}</p>
+        <div className="flex flex-col bg-content p-4" key={comment.id}>
+          <p className="font-semibold">{comment.user.displayName}:</p>
+          <p className="pl-4">{comment.content}</p>
         </div>
       ))}
     </div>

@@ -8,6 +8,9 @@ import "./src/env.js";
 const config = {
   typescript: { ignoreBuildErrors: true },
   eslint: { ignoreDuringBuilds: true },
+  images: {
+    domains: ["4domyui9xw.ufs.sh"], // Add your external domain here
+  },
 };
 
 export default config;
