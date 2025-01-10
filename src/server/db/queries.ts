@@ -32,6 +32,7 @@ export async function getPostsFromCategory(categoryUrl: string) {
 
   return result;
 }
+
 export async function getPost(categoryUrl: string, postUrl: string) {
   const category = await db.query.categories.findFirst({
     where: (category, { eq }) => eq(category.url, categoryUrl),
@@ -48,6 +49,7 @@ export async function getPost(categoryUrl: string, postUrl: string) {
         columns: {
           username: true,
           displayName: true,
+          avatarUrl: true,
         },
       },
       updater: {
