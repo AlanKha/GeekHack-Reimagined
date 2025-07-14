@@ -1,0 +1,68 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Node.js dependencies and build artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Frontend specific (Next.js)
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/coverage/
+frontend/*.lcov
+frontend/*.test.ts
+frontend/*.test.js
+
+# Backend specific (Go)
+backend/bin/
+backend/dist/
+backend/build/
+backend/pkg/
+backend/vendor/
+backend/*.exe
+backend/*.test
+backend/coverage/
+backend/*.lcov
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Docker specific
+docker-compose.override.yml
+# Docker build context files that should not be copied into the image
+# .dockerignore files handle this for specific images, but sometimes
+# you might want to ignore them at the repo level too.
+# Example:
+# **/.dockerignore
+
+# Database files
+postgres_data/
+*.sqlite3
+*.db
+
+# Miscellaneous temporary files
+*.swp
+*.swo
+*.bak
+*.tmp
+*.pid
+*.seed
