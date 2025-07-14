@@ -1,6 +1,6 @@
 # 🚀 GeekHack, Reimagined
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/your-username/geekhack-reimagined)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/AlanKha/GeekHack-Reimagined)
 [![Go Version](https://img.shields.io/badge/go-1.18+-blue)](https://golang.org/)
 [![Next.js Version](https://img.shields.io/badge/next.js-13+-blue)](https://nextjs.org/)
 
@@ -16,12 +16,12 @@
 
 ## 🛠️ Tech Stack
 
-| Area | Technology |
-|------|------------|
-| **Frontend** | React, Next.js, Tailwind CSS |
-| **Backend** | Golang, Gin, GORM |
-| **Database** | PostgreSQL |
-| **Dev & Deploy** | Docker, Docker Compose |
+| Area             | Technology                   |
+| ---------------- | ---------------------------- |
+| **Frontend**     | React, Next.js, Tailwind CSS |
+| **Backend**      | Golang, Gin, GORM            |
+| **Database**     | PostgreSQL                   |
+| **Dev & Deploy** | Docker, Docker Compose       |
 
 ## 📁 Project Structure
 
@@ -64,7 +64,7 @@ You must have the following software installed on your machine:
 1. **Clone the repository:**
 
 ```bash
-git clone https://github.com/your-username/geekhack-reimagined.git
+git clone https://github.com/AlanKha/GeekHack-Reimagined.git
 cd geekhack-reimagined
 ```
 
@@ -97,63 +97,71 @@ This is the development plan. Check off items as they are completed.
 
 ### Phase 0: Project Setup & Foundation
 
-- [X] Initialize Git repository
-- [X] Set up monorepo folder structure (frontend, backend)
-- [X] Create initial docker-compose.yml for local development
-- [X] Create .env.example with necessary variables (DB credentials, ports, JWT secret)
-- [X] Write initial README.md file
+- [x] Initialize Git repository
+- [x] Set up monorepo folder structure (frontend, backend)
+- [x] Create initial docker-compose.yml for local development
+- [x] Create .env.example with necessary variables (DB credentials, ports, JWT secret)
+- [x] Write initial README.md file
 
 ### Phase 1: Backend API (Golang)
 
-- [X] Initialize Go module in `/backend`
-- [X] Integrate Gin for routing
-- [X] Set up GORM and establish a database connection module
-- [X] **Database Design**: Define GORM models for User, Thread, and Post
-- [X] Implement GORM AutoMigrate to create tables on startup
+- [x] Initialize Go module in `/backend`
+- [x] Integrate Gin for routing
+- [x] Set up GORM and establish a database connection module
+- [x] **Database Design**: Define GORM models for User, Thread, and Post
+- [x] Implement GORM AutoMigrate to create tables on startup
 
 #### User Authentication:
-- [X] `/register` endpoint (hash password before saving)
-- [X] `/login` endpoint (verify credentials, issue JWT)
-- [X] JWT authentication middleware to protect routes
+
+- [x] `/register` endpoint (hash password before saving)
+- [x] `/login` endpoint (verify credentials, issue JWT)
+- [x] JWT authentication middleware to protect routes
 
 #### Thread Endpoints (CRUD):
-- [X] `POST /api/threads` (Create, protected)
-- [X] `GET /api/threads` (Read all)
-- [X] `GET /api/threads/:id` (Read one)
-- [X] `PUT /api/threads/:id` (Update, protected)
-- [X] `DELETE /api/threads/:id` (Delete, protected)
+
+- [x] `POST /api/threads` (Create, protected)
+- [x] `GET /api/threads` (Read all)
+- [x] `GET /api/threads/:id` (Read one)
+- [x] `PUT /api/threads/:id` (Update, protected)
+- [x] `DELETE /api/threads/:id` (Delete, protected)
 
 #### Post Endpoints (CRUD):
-- [X] `POST /api/threads/:id/posts` (Create, protected)
-- [X] `GET /api/posts/:id` (Read one, likely not needed)
-- [X] `PUT /api/posts/:id` (Update, protected)
-- [X] `DELETE /api/posts/:id` (Delete, protected)
 
-- [X] Implement robust error handling and standardized JSON responses
-- [X] Set up basic unit tests for service logic
+- [x] `POST /api/threads/:id/posts` (Create, protected)
+- [x] `GET /api/posts/:id` (Read one, likely not needed)
+- [x] `PUT /api/posts/:id` (Update, protected)
+- [x] `DELETE /api/posts/:id` (Delete, protected)
+
+- [x] Implement robust error handling and standardized JSON responses
+- [x] Set up basic unit tests for service logic
 
 ### Phase 2: Frontend UI (Next.js)
 
 - [ ] Initialize Next.js project in `/frontend` with TypeScript and Tailwind CSS
 
 #### Component Library:
+
 - [ ] Build reusable UI components (Button, Input, Card, Navbar)
 - [ ] **API Client**: Create a library in `/lib/api.ts` to handle all fetch requests to the backend
 
 #### Static Pages & Layout:
+
 - [ ] Create main application layout with Navbar and Footer
 - [ ] Build Homepage (`/`) to fetch and display all threads
 - [ ] Build `/login` and `/register` pages with forms
 
 #### Dynamic Pages:
+
 - [ ] Build Thread Detail page (`/thread/[id]`) to fetch and display a single thread and its posts
 
 #### Authentication Flow:
+
 - [ ] Create a React Context for managing authentication state
 - [ ] On login, store JWT securely (HttpOnly cookie)
 - [ ] Create protected routes/components that are only visible to logged-in users
 
 #### User Interaction:
+
 - [ ] Build form for creating new threads
 - [ ] Build form for creating new posts/replies within a thread
 - [ ] Implement logic for updating/deleting threads and posts
