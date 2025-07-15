@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
@@ -32,12 +32,13 @@ const ThreadPage = () => {
 
   useEffect(() => {
     if (id) {
-      api.get(`/threads/${id}`)
-        .then(response => {
+      api
+        .get(`/threads/${id}`)
+        .then((response) => {
           setThread(response.data);
         })
-        .catch(error => {
-          console.error("Failed to fetch thread:", error);
+        .catch((error) => {
+          console.error('Failed to fetch thread:', error);
         })
         .finally(() => {
           setLoading(false);
@@ -57,7 +58,7 @@ const ThreadPage = () => {
     <div>
       <h1 className="text-2xl font-bold mb-4">{thread.title}</h1>
       <div className="space-y-4">
-        {thread.posts.map(post => (
+        {thread.posts.map((post) => (
           <PostCard key={post.id} post={post} />
         ))}
       </div>

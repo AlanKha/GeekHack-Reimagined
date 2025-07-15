@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
 import api from '@/lib/api';
@@ -26,13 +26,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const token = localStorage.getItem('token');
     if (token) {
       api.defaults.headers.Authorization = `Bearer ${token}`;
-      api.get('/me').then(response => {
-        setUser(response.data);
-      }).catch(() => {
-        localStorage.removeItem('token');
-      }).finally(() => {
-        setLoading(false);
-      });
+      api
+        .get('/me')
+        .then((response) => {
+          setUser(response.data);
+        })
+        .catch(() => {
+          localStorage.removeItem('token');
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     } else {
       setLoading(false);
     }
@@ -41,7 +45,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const login = (token: string) => {
     localStorage.setItem('token', token);
     api.defaults.headers.Authorization = `Bearer ${token}`;
-    api.get('/me').then(response => {
+    api.get('/me').then((response) => {
       setUser(response.data);
     });
   };

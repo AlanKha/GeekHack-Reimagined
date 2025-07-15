@@ -1,11 +1,14 @@
-import { User } from './user';
-
 export interface Post {
   id: number;
-  content: string;
-  user: User;
+  author: string;
+  authorUrl: string;
   createdAt: string;
-  updatedAt: string;
+  community: string;
+  communityUrl: string;
+  title: string;
+  description: string;
+  votes: string;
+  comments: string;
 }
 
 export interface PostData {

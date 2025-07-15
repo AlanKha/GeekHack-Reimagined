@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -18,18 +18,23 @@ const RegisterPage = () => {
       await api.post('/register', { username, email, password });
       router.push('/auth/login');
     } catch (err) {
-      setError('Failed to register');
+      setError('Error registering: ' + err);
     }
   };
 
   return (
     <div className="flex justify-center items-center h-screen">
       <div className="bg-surface p-8 rounded-lg shadow-md w-96">
-        <h2 className="text-2xl font-bold mb-6 text-center">Create an account</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          Create an account
+        </h2>
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-2" htmlFor="username">
+            <label
+              className="block text-sm font-medium mb-2"
+              htmlFor="username"
+            >
               Username
             </label>
             <input
@@ -55,7 +60,10 @@ const RegisterPage = () => {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-sm font-medium mb-2" htmlFor="password">
+            <label
+              className="block text-sm font-medium mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
@@ -67,7 +75,10 @@ const RegisterPage = () => {
               required
             />
           </div>
-          <button type="submit" className="w-full bg-primary text-white p-2 rounded">
+          <button
+            type="submit"
+            className="w-full bg-primary text-white p-2 rounded"
+          >
             Sign Up
           </button>
         </form>

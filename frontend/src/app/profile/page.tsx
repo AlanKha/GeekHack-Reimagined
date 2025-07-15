@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useAuth } from '@/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 const ProfilePage = () => {
   const { user, loading } = useAuth();
@@ -10,7 +10,7 @@ const ProfilePage = () => {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push("/auth/login");
+      router.push('/auth/login');
     }
   }, [user, loading, router]);
 

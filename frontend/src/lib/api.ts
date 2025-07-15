@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { LoginData, RegisterData } from '../types/auth';
 import { Thread, ThreadData } from '../types/thread';
-import { Post, PostData } from '../types/post';
+import { PostData } from '../types/post';
 
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api',
