@@ -137,18 +137,18 @@ This is the development plan. Check off items as they are completed.
 
 ### Phase 2: Frontend UI (Next.js)
 
-- [ ] Initialize Next.js project in `/frontend` with TypeScript and Tailwind CSS
+- [x] Initialize Next.js project in `/frontend` with TypeScript and Tailwind CSS
 
 #### Component Library:
 
-- [ ] Build reusable UI components (Button, Input, Card, Navbar)
-- [ ] **API Client**: Create a library in `/lib/api.ts` to handle all fetch requests to the backend
+- [x] Build reusable UI components (Button, Input, Card, Navbar)
+- [x] **API Client**: Create a library in `/lib/api.ts` to handle all fetch requests to the backend
 
 #### Static Pages & Layout:
 
-- [ ] Create main application layout with Navbar and Footer
-- [ ] Build Homepage (`/`) to fetch and display all threads
-- [ ] Build `/login` and `/register` pages with forms
+- [x] Create main application layout with Navbar and Footer
+- [x] Build Homepage (`/`) to fetch and display all threads
+- [x] Build `/login` and `/register` pages with forms
 
 #### Dynamic Pages:
 
