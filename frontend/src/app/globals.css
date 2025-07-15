@@ -1,0 +1,32 @@
+@import "tailwindcss";
+
+@theme {
+  --background: #030303;
+  --surface: #1A1A1B;
+  --primary: #F97316;
+  --on-surface: #D7DADC;
+  --on-surface-variant: #818384;
+  --outline: #343536;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--on-surface);
+  font-family: 'Inter', sans-serif;
+}
+
+.bg-surface {
+  background-color: var(--surface);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.text-on-surface-variant {
+  color: var(--on-surface-variant);
+}
+
+.border-outline {
+  border-color: var(--outline);
+}
