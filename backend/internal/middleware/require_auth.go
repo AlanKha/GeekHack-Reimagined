@@ -1,4 +1,3 @@
-
 package middleware
 
 import (
@@ -73,7 +72,7 @@ func (m *Middleware) RequireAuth(c *gin.Context) {
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
-	if ok && token.Valid {
+	if ok {
 		// Check token expiration
 		if float64(time.Now().Unix()) > claims["exp"].(float64) {
 			c.AbortWithStatus(http.StatusUnauthorized)

@@ -1,12 +1,14 @@
 package database
 
 import (
+	"os"
 	"testing"
 
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/tests"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 func TestCreateUser(t *testing.T) {
@@ -131,6 +133,13 @@ func TestGetThreads(t *testing.T) {
 	assert.Equal(t, thread2.Title, threads[1].Title)
 	assert.NotNil(t, threads[0].User) // Check if User is preloaded
 	assert.Equal(t, user.Username, threads[0].User.Username)
+
+	// Test case: No threads in the database
+	// Clear the database
+	db.Exec("DELETE FROM threads")
+	threads, err = dbClient.GetThreads()
+	assert.NoError(t, err)
+	assert.Len(t, threads, 0)
 }
 
 func TestGetThreadByID(t *testing.T) {
@@ -239,6 +248,11 @@ func TestDeleteThread(t *testing.T) {
 	assert.Error(t, err)
 	assert.True(t, deletedThread.ID == 0) // Check for zero value ID
 	assert.Contains(t, err.Error(), "record not found")
+
+	// Test case: Delete non-existent thread
+	nonExistentThread := &models.Thread{Model: gorm.Model{ID: 999}}
+	err = dbClient.DeleteThread(nonExistentThread)
+	assert.NoError(t, err)
 }
 
 func TestCreatePost(t *testing.T) {
@@ -405,4 +419,15 @@ func TestDeletePost(t *testing.T) {
 	assert.Error(t, err)
 	assert.True(t, deletedPost.ID == 0) // Check for zero value ID
 	assert.Contains(t, err.Error(), "record not found")
+}
+
+func TestNewDBClient_Failure(t *testing.T) {
+	// Set invalid environment variables to trigger a connection error
+	os.Setenv("SUPABASE_HOST", "invalid_host")
+	os.Setenv("SUPABASE_USER", "invalid_user")
+	os.Setenv("SUPABASE_PASSWORD", "invalid_password")
+	os.Setenv("SUPABASE_DB", "invalid_db")
+
+	_, err := NewDBClient()
+	assert.Error(t, err)
 }

@@ -65,7 +65,7 @@ You must have the following software installed on your machine:
 
 ```bash
 git clone https://github.com/AlanKha/GeekHack-Reimagined.git
-cd geekhack-reimagined
+cd GeekHack-Reimagined
 ```
 
 2. **Configure Environment Variables:**

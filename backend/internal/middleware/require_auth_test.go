@@ -186,4 +186,58 @@ func TestRequireAuth(t *testing.T) {
 		assert.NotNil(t, user)
 		assert.Equal(t, testUser.ID, user.(*models.User).ID)
 	})
+
+	t.Run("Token not yet valid", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+
+		// Create a token that is not valid for another hour
+		token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+			"sub": testUser.Email,
+			"exp": time.Now().Add(time.Hour).Unix(),
+			"nbf": time.Now().Add(time.Hour).Unix(),
+		})
+		tokenString, _ := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
+
+		req.Header.Set("Authorization", "Bearer "+tokenString)
+		c.Request = req
+
+		middleware.RequireAuth(c)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+
+	t.Run("Invalid signing method", func(t *testing.T) {
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		req, _ := http.NewRequest(http.MethodGet, "/", nil)
+
+		// Create a token with "none" signing method
+		tokenWithInvalidSigningMethod, err := jwt.NewWithClaims(jwt.SigningMethodNone, jwt.MapClaims{
+			"sub": testUser.Email,
+			"exp": time.Now().Add(time.Hour).Unix(),
+		}).SignedString(jwt.UnsafeAllowNoneSignatureType)
+		assert.NoError(t, err)
+
+		req.Header.Set("Authorization", "Bearer "+tokenWithInvalidSigningMethod)
+		c.Request = req
+
+		middleware.RequireAuth(c)
+
+		assert.Equal(t, http.StatusUnauthorized, w.Code)
+	})
+}
+
+func TestNewMiddleware(t *testing.T) {
+	// Setup test database
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+
+	// Create a new middleware instance
+	middleware := NewMiddleware(&database.DBClient{DB: db})
+
+	// Assert that the middleware and its DB field are not nil
+	assert.NotNil(t, middleware)
+	assert.NotNil(t, middleware.DB)
 }

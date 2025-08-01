@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
-	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/middleware"
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/tests"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -54,7 +54,10 @@ func TestCreatePost(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	var createdThread models.Thread
-	var createdThreadResponse struct { Message string; Thread models.Thread }
+	var createdThreadResponse struct {
+		Message string
+		Thread  models.Thread
+	}
 	json.Unmarshal(w.Body.Bytes(), &createdThreadResponse)
 	createdThread = createdThreadResponse.Thread
 

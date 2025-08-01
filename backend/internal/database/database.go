@@ -1,4 +1,3 @@
-
 package database
 
 import (
@@ -30,9 +29,9 @@ func NewDBClient() (Datastore, error) {
 
 	fmt.Println("Connection Opened to Database")
 	err = db.AutoMigrate(&models.User{}, &models.Thread{}, &models.Post{})
-    if err != nil {
-        return nil, err
-    }
+	if err != nil {
+		return nil, err
+	}
 	fmt.Println("Database Migrated")
 
 	return &DBClient{DB: db}, nil

@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
-	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/middleware"
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/tests"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
@@ -146,12 +146,15 @@ func TestGetThread(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	var createdThread models.Thread
-	var createdThreadResponse struct { Message string; Thread models.Thread }
+	var createdThreadResponse struct {
+		Message string
+		Thread  models.Thread
+	}
 	json.Unmarshal(w.Body.Bytes(), &createdThreadResponse)
 	createdThread = createdThreadResponse.Thread
 
 	// Test case 1: Get existing thread
-	req, _ = http.NewRequest(http.MethodGet, "/api/threads/" + fmt.Sprintf("%d", createdThread.ID), nil)
+	req, _ = http.NewRequest(http.MethodGet, "/api/threads/"+fmt.Sprintf("%d", createdThread.ID), nil)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
@@ -204,13 +207,16 @@ func TestUpdateThread(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	var createdThread models.Thread
-	var createdThreadResponse struct { Message string; Thread models.Thread }
+	var createdThreadResponse struct {
+		Message string
+		Thread  models.Thread
+	}
 	json.Unmarshal(w.Body.Bytes(), &createdThreadResponse)
 	createdThread = createdThreadResponse.Thread
 
 	// Test case 1: Successful update
 	updatedThreadJSON := `{"title": "Updated Title", "content": "Updated Content."}`
-	req, _ = http.NewRequest(http.MethodPut, "/api/threads/" + fmt.Sprintf("%d", createdThread.ID), bytes.NewBufferString(updatedThreadJSON))
+	req, _ = http.NewRequest(http.MethodPut, "/api/threads/"+fmt.Sprintf("%d", createdThread.ID), bytes.NewBufferString(updatedThreadJSON))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", cookie)
 	w = httptest.NewRecorder()
@@ -221,7 +227,7 @@ func TestUpdateThread(t *testing.T) {
 
 	// Test case 2: Unauthorized update (no cookie)
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest(http.MethodPut, "/api/threads/" + fmt.Sprintf("%d", createdThread.ID), bytes.NewBufferString(updatedThreadJSON))
+	req, _ = http.NewRequest(http.MethodPut, "/api/threads/"+fmt.Sprintf("%d", createdThread.ID), bytes.NewBufferString(updatedThreadJSON))
 	req.Header.Set("Content-Type", "application/json")
 	r.ServeHTTP(w, req)
 
@@ -276,12 +282,15 @@ func TestDeleteThread(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	var createdThread models.Thread
-	var createdThreadResponse struct { Message string; Thread models.Thread }
+	var createdThreadResponse struct {
+		Message string
+		Thread  models.Thread
+	}
 	json.Unmarshal(w.Body.Bytes(), &createdThreadResponse)
 	createdThread = createdThreadResponse.Thread
 
 	// Test case 1: Successful deletion
-	req, _ = http.NewRequest(http.MethodDelete, "/api/threads/" + fmt.Sprintf("%d", createdThread.ID), nil)
+	req, _ = http.NewRequest(http.MethodDelete, "/api/threads/"+fmt.Sprintf("%d", createdThread.ID), nil)
 	req.Header.Set("Cookie", cookie)
 	w = httptest.NewRecorder()
 	r.ServeHTTP(w, req)
@@ -295,7 +304,7 @@ func TestDeleteThread(t *testing.T) {
 
 	// Test case 2: Unauthorized deletion (no cookie)
 	w = httptest.NewRecorder()
-	req, _ = http.NewRequest(http.MethodDelete, "/api/threads/" + fmt.Sprintf("%d", createdThread.ID), nil)
+	req, _ = http.NewRequest(http.MethodDelete, "/api/threads/"+fmt.Sprintf("%d", createdThread.ID), nil)
 	r.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusUnauthorized, w.Code)
