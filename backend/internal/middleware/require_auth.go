@@ -14,7 +14,17 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func RequireAuth(c *gin.Context) {
+// Middleware holds the datastore
+type Middleware struct {
+	DB database.Datastore
+}
+
+// NewMiddleware creates a new middleware
+func NewMiddleware(db database.Datastore) *Middleware {
+	return &Middleware{DB: db}
+}
+
+func (m *Middleware) RequireAuth(c *gin.Context) {
 	var tokenString string
 	// Check for token in cookie
 	cookie, err := c.Cookie("Authorization")
@@ -71,10 +81,10 @@ func RequireAuth(c *gin.Context) {
 		}
 
 		// Find the user
-		var user models.User
-		database.DB.First(&user, claims["sub"])
+		var user *models.User
+		user, err = m.DB.GetUserByEmail(claims["sub"].(string))
 
-		if user.ID == 0 {
+		if err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
 		}

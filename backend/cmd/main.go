@@ -2,6 +2,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
@@ -11,29 +12,35 @@ import (
 )
 
 func main() {
-	database.Connect()
+	db, err := database.NewDBClient()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	h := handlers.NewHandler(db)
+	m := middleware.NewMiddleware(db)
 
 	r := gin.Default()
 
-	r.POST("/register", func(c *gin.Context) { handlers.Register(c, database.DB) })
-	r.POST("/login", func(c *gin.Context) { handlers.Login(c, database.DB) })
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
 
-	r.GET("/validate", middleware.RequireAuth, func(c *gin.Context) {
+	r.GET("/validate", m.RequireAuth, func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "I'm logged in"})
 	})
 
 	// Thread Routes
-	r.POST("/api/threads", middleware.RequireAuth, func(c *gin.Context) { handlers.CreateThread(c, database.DB) })
-	r.GET("/api/threads", func(c *gin.Context) { handlers.GetThreads(c, database.DB) })
-	r.GET("/api/threads/:id", func(c *gin.Context) { handlers.GetThread(c, database.DB) })
-	r.PUT("/api/threads/:id", middleware.RequireAuth, func(c *gin.Context) { handlers.UpdateThread(c, database.DB) })
-	r.DELETE("/api/threads/:id", middleware.RequireAuth, func(c *gin.Context) { handlers.DeleteThread(c, database.DB) })
+	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
+	r.GET("/api/threads", h.GetThreads)
+	r.GET("/api/threads/:id", h.GetThread)
+	r.PUT("/api/threads/:id", m.RequireAuth, h.UpdateThread)
+	r.DELETE("/api/threads/:id", m.RequireAuth, h.DeleteThread)
 
 	// Post Routes
-	r.POST("/api/threads/:id/posts", middleware.RequireAuth, func(c *gin.Context) { handlers.CreatePost(c, database.DB) })
-	r.GET("/api/posts/:id", func(c *gin.Context) { handlers.GetPost(c, database.DB) })
-	r.PUT("/api/posts/:id", middleware.RequireAuth, func(c *gin.Context) { handlers.UpdatePost(c, database.DB) })
-	r.DELETE("/api/posts/:id", middleware.RequireAuth, func(c *gin.Context) { handlers.DeletePost(c, database.DB) })
+	r.POST("/api/threads/:id/posts", m.RequireAuth, h.CreatePost)
+	r.GET("api/posts/:id", h.GetPost)
+	r.PUT("/api/posts/:id", m.RequireAuth, h.UpdatePost)
+	r.DELETE("/api/posts/:id", m.RequireAuth, h.DeletePost)
 
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{

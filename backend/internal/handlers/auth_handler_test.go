@@ -14,14 +14,17 @@ import (
 
 func TestRegister(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db := tests.SetupTestDB()
-	database.Connect(db)
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+	testDB := &database.DBClient{DB: db}
+
+	h := NewHandler(testDB)
 
 	r := gin.Default()
-	r.POST("/register", func(c *gin.Context) { Register(c, db) })
+	r.POST("/register", h.Register)
 
 	// Test case 1: Successful registration
-	userJSON := `{"username": "testuser", "password": "testpassword"}`
+	userJSON := `{"username": "testuser", "email": "testuser@example.com", "password": "testpassword"}`
 	req, _ := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(userJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
@@ -42,22 +45,25 @@ func TestRegister(t *testing.T) {
 
 func TestLogin(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db := tests.SetupTestDB()
-	database.Connect(db)
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+	testDB := &database.DBClient{DB: db}
+
+	h := NewHandler(testDB)
 
 	r := gin.Default()
-	r.POST("/register", func(c *gin.Context) { Register(c, db) })
-	r.POST("/login", func(c *gin.Context) { Login(c, db) })
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
 
 	// Register a user
-	userJSON := `{"username": "loginuser", "password": "loginpassword"}`
+	userJSON := `{"username": "loginuser", "email": "loginuser@example.com", "password": "loginpassword"}`
 	req, _ := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(userJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
 	// Test case 1: Successful login
-	loginJSON := `{"username": "loginuser", "password": "loginpassword"}`
+	loginJSON := `{"email": "loginuser@example.com", "password": "loginpassword"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
@@ -67,7 +73,7 @@ func TestLogin(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "token")
 
 	// Test case 2: Invalid password
-	loginJSON = `{"username": "loginuser", "password": "wrongpassword"}`
+	loginJSON = `{"email": "loginuser@example.com", "password": "wrongpassword"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
@@ -77,7 +83,7 @@ func TestLogin(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "Invalid username or password")
 
 	// Test case 3: Non-existent user
-	loginJSON = `{"username": "nonexistentuser", "password": "password"}`
+	loginJSON = `{"email": "nonexistentuser@example.com", "password": "password"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()

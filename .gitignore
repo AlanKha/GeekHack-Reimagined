@@ -66,3 +66,5 @@ postgres_data/
 *.tmp
 *.pid
 *.seed
+
+GEMINI.md

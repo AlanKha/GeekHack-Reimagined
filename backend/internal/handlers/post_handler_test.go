@@ -18,23 +18,27 @@ import (
 
 func TestCreatePost(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db := tests.SetupTestDB()
-	database.Connect(db)
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+	testDB := &database.DBClient{DB: db}
+
+	h := NewHandler(testDB)
+	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", func(c *gin.Context) { Register(c, db) })
-	r.POST("/login", func(c *gin.Context) { Login(c, db) })
-	r.POST("/api/threads", middleware.RequireAuth, func(c *gin.Context) { CreateThread(c, db) })
-	r.POST("/api/threads/:id/posts", middleware.RequireAuth, func(c *gin.Context) { CreatePost(c, db) })
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
+	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
+	r.POST("/api/threads/:id/posts", m.RequireAuth, h.CreatePost)
 
 	// Register a user and get a token
-	userJSON := `{"username": "postuser", "password": "postpassword"}`
+	userJSON := `{"username": "postuser", "email": "postuser@example.com", "password": "postpassword"}`
 	req, _ := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(userJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
-	loginJSON := `{"username": "postuser", "password": "postpassword"}`
+	loginJSON := `{"email": "postuser@example.com", "password": "postpassword"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()

@@ -1,4 +1,3 @@
-
 package handlers
 
 import (
@@ -19,22 +18,26 @@ import (
 
 func TestCreateThread(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db := tests.SetupTestDB()
-	database.Connect(db)
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+	testDB := &database.DBClient{DB: db}
+
+	h := NewHandler(testDB)
+	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", func(c *gin.Context) { Register(c, db) })
-	r.POST("/login", func(c *gin.Context) { Login(c, db) })
-	r.POST("/api/threads", middleware.RequireAuth, func(c *gin.Context) { CreateThread(c, db) })
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
+	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
 
 	// Register a user and get a token
-	userJSON := `{"username": "threaduser", "password": "threadpassword"}`
+	userJSON := `{"username": "threaduser", "email": "threaduser@example.com", "password": "threadpassword"}`
 	req, _ := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(userJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
-	loginJSON := `{"username": "threaduser", "password": "threadpassword"}`
+	loginJSON := `{"email": "threaduser@example.com", "password": "threadpassword"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
@@ -63,23 +66,27 @@ func TestCreateThread(t *testing.T) {
 
 func TestGetThreads(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db := tests.SetupTestDB()
-	database.Connect(db)
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+	testDB := &database.DBClient{DB: db}
+
+	h := NewHandler(testDB)
+	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", func(c *gin.Context) { Register(c, db) })
-	r.POST("/login", func(c *gin.Context) { Login(c, db) })
-	r.POST("/api/threads", middleware.RequireAuth, func(c *gin.Context) { CreateThread(c, db) })
-	r.GET("/api/threads", func(c *gin.Context) { GetThreads(c, db) })
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
+	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
+	r.GET("/api/threads", h.GetThreads)
 
 	// Register a user and create a thread
-	userJSON := `{"username": "getthreaduser", "password": "getthreadpassword"}`
+	userJSON := `{"username": "getthreaduser", "email": "getthreaduser@example.com", "password": "getthreadpassword"}`
 	req, _ := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(userJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
-	loginJSON := `{"username": "getthreaduser", "password": "getthreadpassword"}`
+	loginJSON := `{"email": "getthreaduser@example.com", "password": "getthreadpassword"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
@@ -104,23 +111,27 @@ func TestGetThreads(t *testing.T) {
 
 func TestGetThread(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db := tests.SetupTestDB()
-	database.Connect(db)
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+	testDB := &database.DBClient{DB: db}
+
+	h := NewHandler(testDB)
+	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", func(c *gin.Context) { Register(c, db) })
-	r.POST("/login", func(c *gin.Context) { Login(c, db) })
-	r.POST("/api/threads", middleware.RequireAuth, func(c *gin.Context) { CreateThread(c, db) })
-	r.GET("/api/threads/:id", func(c *gin.Context) { GetThread(c, db) })
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
+	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
+	r.GET("/api/threads/:id", h.GetThread)
 
 	// Register a user and create a thread
-	userJSON := `{"username": "getsinglethreaduser", "password": "getsinglethreadpassword"}`
+	userJSON := `{"username": "getsinglethreaduser", "email": "getsinglethreaduser@example.com", "password": "getsinglethreadpassword"}`
 	req, _ := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(userJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
-	loginJSON := `{"username": "getsinglethreaduser", "password": "getsinglethreadpassword"}`
+	loginJSON := `{"email": "getsinglethreaduser@example.com", "password": "getsinglethreadpassword"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
@@ -158,23 +169,27 @@ func TestGetThread(t *testing.T) {
 
 func TestUpdateThread(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db := tests.SetupTestDB()
-	database.Connect(db)
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+	testDB := &database.DBClient{DB: db}
+
+	h := NewHandler(testDB)
+	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", func(c *gin.Context) { Register(c, db) })
-	r.POST("/login", func(c *gin.Context) { Login(c, db) })
-	r.POST("/api/threads", middleware.RequireAuth, func(c *gin.Context) { CreateThread(c, db) })
-	r.PUT("/api/threads/:id", middleware.RequireAuth, func(c *gin.Context) { UpdateThread(c, db) })
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
+	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
+	r.PUT("/api/threads/:id", m.RequireAuth, h.UpdateThread)
 
 	// Register a user and create a thread
-	userJSON := `{"username": "updatethreaduser", "password": "updatethreadpassword"}`
+	userJSON := `{"username": "updatethreaduser", "email": "updatethreaduser@example.com", "password": "updatethreadpassword"}`
 	req, _ := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(userJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
-	loginJSON := `{"username": "updatethreaduser", "password": "updatethreadpassword"}`
+	loginJSON := `{"email": "updatethreaduser@example.com", "password": "updatethreadpassword"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
@@ -226,22 +241,27 @@ func TestUpdateThread(t *testing.T) {
 
 func TestDeleteThread(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	db := tests.SetupTestDB()
+	db, teardown := tests.SetupTestDB(t)
+	defer teardown()
+	testDB := &database.DBClient{DB: db}
+
+	h := NewHandler(testDB)
+	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", func(c *gin.Context) { Register(c, db) })
-	r.POST("/login", func(c *gin.Context) { Login(c, db) })
-	r.POST("/api/threads", middleware.RequireAuth, func(c *gin.Context) { CreateThread(c, db) })
-	r.DELETE("/api/threads/:id", middleware.RequireAuth, func(c *gin.Context) { DeleteThread(c, db) })
+	r.POST("/register", h.Register)
+	r.POST("/login", h.Login)
+	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
+	r.DELETE("/api/threads/:id", m.RequireAuth, h.DeleteThread)
 
 	// Register a user and create a thread
-	userJSON := `{"username": "deletethreaduser", "password": "deletethreadpassword"}`
+	userJSON := `{"username": "deletethreaduser", "email": "deletethreaduser@example.com", "password": "deletethreadpassword"}`
 	req, _ := http.NewRequest(http.MethodPost, "/register", bytes.NewBufferString(userJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
 
-	loginJSON := `{"username": "deletethreaduser", "password": "deletethreadpassword"}`
+	loginJSON := `{"email": "deletethreaduser@example.com", "password": "deletethreadpassword"}`
 	req, _ = http.NewRequest(http.MethodPost, "/login", bytes.NewBufferString(loginJSON))
 	req.Header.Set("Content-Type", "application/json")
 	w = httptest.NewRecorder()
@@ -270,9 +290,8 @@ func TestDeleteThread(t *testing.T) {
 	assert.Contains(t, w.Body.String(), "Thread deleted")
 
 	// Verify thread is deleted
-	var thread models.Thread
-	result := db.First(&thread, createdThread.ID)
-	assert.Error(t, result.Error)
+	_, err := testDB.GetThreadByID(createdThread.ID)
+	assert.Error(t, err)
 
 	// Test case 2: Unauthorized deletion (no cookie)
 	w = httptest.NewRecorder()

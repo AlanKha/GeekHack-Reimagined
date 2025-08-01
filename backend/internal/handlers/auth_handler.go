@@ -5,15 +5,25 @@ import (
 	"os"
 	"time"
 
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
-func Register(c *gin.Context, db *gorm.DB) {
+// Handler holds the datastore
+type Handler struct {
+	DB database.Datastore
+}
+
+// NewHandler creates a new handler
+func NewHandler(db database.Datastore) *Handler {
+	return &Handler{DB: db}
+}
+
+func (h *Handler) Register(c *gin.Context) {
 	var body struct {
 		Username string
 		Email    string
@@ -33,9 +43,9 @@ func Register(c *gin.Context, db *gorm.DB) {
 	}
 
 	user := models.User{Username: body.Username, Email: body.Email, Password: string(hash)}
-	result := db.Create(&user)
+	err = h.DB.CreateUser(&user)
 
-	if result.Error != nil {
+	if err != nil {
 		utils.RespondWithError(c, http.StatusBadRequest, "Username already exists")
 		return
 	}
@@ -43,7 +53,7 @@ func Register(c *gin.Context, db *gorm.DB) {
 	c.JSON(http.StatusOK, gin.H{"message": "User created"})
 }
 
-func Login(c *gin.Context, db *gorm.DB) {
+func (h *Handler) Login(c *gin.Context) {
 	var body struct {
 		Email    string
 		Password string
@@ -54,15 +64,14 @@ func Login(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	var user models.User
-	db.First(&user, "email = ?", body.Email)
+	user, err := h.DB.GetUserByEmail(body.Email)
 
-	if user.ID == 0 {
+	if err != nil {
 		utils.RespondWithError(c, http.StatusBadRequest, "Invalid username or password")
 		return
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
 
 	if err != nil {
 		utils.RespondWithError(c, http.StatusBadRequest, "Invalid username or password")
@@ -70,7 +79,7 @@ func Login(c *gin.Context, db *gorm.DB) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": user.ID,
+		"sub": user.Email,
 		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(), // 30 days
 	})
 

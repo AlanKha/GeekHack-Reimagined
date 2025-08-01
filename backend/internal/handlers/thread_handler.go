@@ -3,14 +3,14 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/utils"
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
-func CreateThread(c *gin.Context, db *gorm.DB) {
+func (h *Handler) CreateThread(c *gin.Context) {
 	var body struct {
 		Title   string
 		Content string
@@ -26,12 +26,12 @@ func CreateThread(c *gin.Context, db *gorm.DB) {
 	thread := models.Thread{
 		Title:   body.Title,
 		Content: body.Content,
-		UserID:  user.(models.User).ID,
+		UserID:  user.(*models.User).ID,
 	}
 
-	result := db.Create(&thread)
+	err := h.DB.CreateThread(&thread)
 
-	if result.Error != nil {
+	if err != nil {
 		utils.RespondWithError(c, http.StatusInternalServerError, "Failed to create thread")
 		return
 	}
@@ -39,20 +39,26 @@ func CreateThread(c *gin.Context, db *gorm.DB) {
 	c.JSON(http.StatusCreated, gin.H{"message": "Thread created", "thread": thread})
 }
 
-func GetThreads(c *gin.Context, db *gorm.DB) {
-	var threads []models.Thread
-	db.Preload("User").Find(&threads)
+func (h *Handler) GetThreads(c *gin.Context) {
+	threads, err := h.DB.GetThreads()
+	if err != nil {
+		utils.RespondWithError(c, http.StatusInternalServerError, "Failed to get threads")
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"threads": threads})
 }
 
-func GetThread(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+func (h *Handler) GetThread(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		utils.RespondWithError(c, http.StatusBadRequest, "Invalid thread ID")
+		return
+	}
 
-	var thread models.Thread
-	result := db.Preload("User").Preload("Posts.User").First(&thread, id)
+	thread, err := h.DB.GetThreadByID(uint(id))
 
-	if result.Error != nil {
+	if err != nil {
 		utils.RespondWithError(c, http.StatusNotFound, "Thread not found")
 		return
 	}
@@ -60,8 +66,12 @@ func GetThread(c *gin.Context, db *gorm.DB) {
 	c.JSON(http.StatusOK, gin.H{"thread": thread})
 }
 
-func UpdateThread(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+func (h *Handler) UpdateThread(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		utils.RespondWithError(c, http.StatusBadRequest, "Invalid thread ID")
+		return
+	}
 
 	var body struct {
 		Title   string
@@ -73,43 +83,58 @@ func UpdateThread(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	var thread models.Thread
-	db.First(&thread, id)
+	thread, err := h.DB.GetThreadByID(uint(id))
 
-	if thread.ID == 0 {
+	if err != nil {
 		utils.RespondWithError(c, http.StatusNotFound, "Thread not found")
 		return
 	}
 
 	user, _ := c.Get("user")
-	if thread.UserID != user.(models.User).ID {
+	if thread.UserID != user.(*models.User).ID {
 		utils.RespondWithError(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
-	db.Model(&thread).Updates(models.Thread{Title: body.Title, Content: body.Content})
+	thread.Title = body.Title
+	thread.Content = body.Content
+
+	err = h.DB.UpdateThread(thread)
+
+	if err != nil {
+		utils.RespondWithError(c, http.StatusInternalServerError, "Failed to update thread")
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Thread updated", "thread": thread})
 }
 
-func DeleteThread(c *gin.Context, db *gorm.DB) {
-	id := c.Param("id")
+func (h *Handler) DeleteThread(c *gin.Context) {
+	id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+	if err != nil {
+		utils.RespondWithError(c, http.StatusBadRequest, "Invalid thread ID")
+		return
+	}
 
-	var thread models.Thread
-	db.First(&thread, id)
+	thread, err := h.DB.GetThreadByID(uint(id))
 
-	if thread.ID == 0 {
+	if err != nil {
 		utils.RespondWithError(c, http.StatusNotFound, "Thread not found")
 		return
 	}
 
 	user, _ := c.Get("user")
-	if thread.UserID != user.(models.User).ID {
+	if thread.UserID != user.(*models.User).ID {
 		utils.RespondWithError(c, http.StatusUnauthorized, "Unauthorized")
 		return
 	}
 
-	db.Delete(&thread)
+	err = h.DB.DeleteThread(thread)
+
+	if err != nil {
+		utils.RespondWithError(c, http.StatusInternalServerError, "Failed to delete thread")
+		return
+	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Thread deleted"})
 }
