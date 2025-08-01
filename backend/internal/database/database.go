@@ -17,11 +17,13 @@ func Connect(testDB ...*gorm.DB) {
 	if len(testDB) > 0 && testDB[0] != nil {
 		DB = testDB[0]
 	} else {
-		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable",
-			os.Getenv("DATABASE_HOST"),
-			os.Getenv("POSTGRES_USER"),
-			os.Getenv("POSTGRES_PASSWORD"),
-			os.Getenv("POSTGRES_DB"))
+		// Supabase connection string.
+		// You can find these details in your Supabase project settings > Database > Connection info.
+		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=require",
+			os.Getenv("SUPABASE_HOST"),
+			os.Getenv("SUPABASE_USER"),
+			os.Getenv("SUPABASE_PASSWORD"),
+			os.Getenv("SUPABASE_DB"))
 
 		var err error
 		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})

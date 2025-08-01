@@ -185,6 +185,11 @@ This is the development plan. Check off items as they are completed.
 - [ ] Full-text search functionality
 - [ ] Admin roles and moderation tools
 
+## 🚀 Architecture Roadmap
+
+- **Backend:** Implement Redis for caching frequently accessed data (e.g., threads, posts) to reduce database load and improve API response times.
+- **Frontend:** Integrate Redux Toolkit for more robust and scalable state management, particularly for handling user authentication and caching fetched data.
+
 ---
 
 ## 🤝 Contributing

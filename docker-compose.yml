@@ -9,12 +9,13 @@ services:
     volumes:
       - ./backend:/app
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-      - DATABASE_HOST=db
-    depends_on:
-      - db
+      - SUPABASE_HOST=${SUPABASE_HOST}
+      - SUPABASE_USER=${SUPABASE_USER}
+      - SUPABASE_PASSWORD=${SUPABASE_PASSWORD}
+      - SUPABASE_DB=${SUPABASE_DB}
+      - JWT_SECRET=${JWT_SECRET}
+    dns:
+      - 8.8.8.8
 
   frontend:
     build:
@@ -27,17 +28,3 @@ services:
       - ./frontend:/app
     depends_on:
       - backend
-
-  db:
-    image: postgres:13-alpine
-    environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data/
-
-volumes:
-  postgres_data:

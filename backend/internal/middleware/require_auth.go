@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
@@ -14,11 +15,25 @@ import (
 )
 
 func RequireAuth(c *gin.Context) {
-	tokenString, err := c.Cookie("Authorization")
-
-	if err != nil {
-		c.AbortWithStatus(http.StatusUnauthorized)
-		return
+	var tokenString string
+	// Check for token in cookie
+	cookie, err := c.Cookie("Authorization")
+	if err == nil {
+		tokenString = cookie
+	} else {
+		// Check for token in header
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		// Split the header to get the token part
+		parts := strings.Split(authHeader, " ")
+		if len(parts) != 2 || strings.ToLower(parts[0]) != "bearer" {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+		tokenString = parts[1]
 	}
 
 	// Get JWT_SECRET from environment variables

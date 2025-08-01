@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -20,7 +20,7 @@ const LoginPage = () => {
       login(response.data.token);
       router.push('/');
     } catch (err) {
-      setError('Invalid email or password');
+      setError('Error logging in: ' + err);
     }
   };
 
@@ -44,7 +44,10 @@ const LoginPage = () => {
             />
           </div>
           <div className="mb-6">
-            <label className="block text-sm font-medium mb-2" htmlFor="password">
+            <label
+              className="block text-sm font-medium mb-2"
+              htmlFor="password"
+            >
               Password
             </label>
             <input
@@ -56,12 +59,15 @@ const LoginPage = () => {
               required
             />
           </div>
-          <button type="submit" className="w-full bg-primary text-white p-2 rounded">
+          <button
+            type="submit"
+            className="w-full bg-primary text-white p-2 rounded"
+          >
             Login
           </button>
         </form>
         <p className="text-center mt-4">
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link href="/auth/register" className="text-primary">
             Sign up
           </Link>

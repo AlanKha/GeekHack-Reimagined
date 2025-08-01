@@ -16,6 +16,7 @@ import (
 func Register(c *gin.Context, db *gorm.DB) {
 	var body struct {
 		Username string
+		Email    string
 		Password string
 	}
 
@@ -31,7 +32,7 @@ func Register(c *gin.Context, db *gorm.DB) {
 		return
 	}
 
-	user := models.User{Username: body.Username, Password: string(hash)}
+	user := models.User{Username: body.Username, Email: body.Email, Password: string(hash)}
 	result := db.Create(&user)
 
 	if result.Error != nil {
@@ -44,7 +45,7 @@ func Register(c *gin.Context, db *gorm.DB) {
 
 func Login(c *gin.Context, db *gorm.DB) {
 	var body struct {
-		Username string
+		Email    string
 		Password string
 	}
 
@@ -54,7 +55,7 @@ func Login(c *gin.Context, db *gorm.DB) {
 	}
 
 	var user models.User
-	db.First(&user, "username = ?", body.Username)
+	db.First(&user, "email = ?", body.Email)
 
 	if user.ID == 0 {
 		utils.RespondWithError(c, http.StatusBadRequest, "Invalid username or password")
