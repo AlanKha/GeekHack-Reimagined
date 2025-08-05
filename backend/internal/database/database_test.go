@@ -1,14 +1,13 @@
 package database
 
 import (
-	"os"
-	"testing"
-
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/tests"
 	"github.com/stretchr/testify/assert"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"os"
+	"testing"
 )
 
 func TestCreateUser(t *testing.T) {

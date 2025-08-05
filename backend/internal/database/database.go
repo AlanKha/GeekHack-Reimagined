@@ -2,11 +2,10 @@ package database
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"os"
 )
 
 // DBClient holds the database connection
@@ -28,7 +27,17 @@ func NewDBClient() (Datastore, error) {
 	}
 
 	fmt.Println("Connection Opened to Database")
-	err = db.AutoMigrate(&models.User{}, &models.Thread{}, &models.Post{})
+	err = db.AutoMigrate(
+		&models.User{},
+		&models.Category{},
+		&models.Thread{},
+		&models.Post{},
+		&models.Reaction{},
+		&models.ModerationLog{},
+		&models.UserSession{},
+		&models.ThreadSubscription{},
+		&models.Notification{},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -98,4 +107,69 @@ func (c *DBClient) UpdatePost(post *models.Post) error {
 // DeletePost deletes a post
 func (c *DBClient) DeletePost(post *models.Post) error {
 	return c.DB.Delete(post).Error
+}
+
+// GetUserByID retrieves a user by ID
+func (c *DBClient) GetUserByID(id uint) (*models.User, error) {
+	var user models.User
+	result := c.DB.First(&user, id)
+	return &user, result.Error
+}
+
+// UpdateUser updates a user
+func (c *DBClient) UpdateUser(user *models.User) error {
+	return c.DB.Save(user).Error
+}
+
+// CreateCategory creates a new category
+func (c *DBClient) CreateCategory(category *models.Category) error {
+	return c.DB.Create(category).Error
+}
+
+// GetCategories retrieves all categories
+func (c *DBClient) GetCategories() ([]models.Category, error) {
+	var categories []models.Category
+	result := c.DB.Find(&categories)
+	return categories, result.Error
+}
+
+// GetCategoryByID retrieves a category by ID
+func (c *DBClient) GetCategoryByID(id uint) (*models.Category, error) {
+	var category models.Category
+	result := c.DB.First(&category, id)
+	return &category, result.Error
+}
+
+// UpdateCategory updates a category
+func (c *DBClient) UpdateCategory(category *models.Category) error {
+	return c.DB.Save(category).Error
+}
+
+// DeleteCategory deletes a category
+func (c *DBClient) DeleteCategory(category *models.Category) error {
+	return c.DB.Delete(category).Error
+}
+
+// CreateReaction creates a new reaction
+func (c *DBClient) CreateReaction(reaction *models.Reaction) error {
+	return c.DB.Create(reaction).Error
+}
+
+// GetReactionsByPostID retrieves all reactions for a post
+func (c *DBClient) GetReactionsByPostID(postID uint) ([]models.Reaction, error) {
+	var reactions []models.Reaction
+	result := c.DB.Find(&reactions, "post_id = ?", postID)
+	return reactions, result.Error
+}
+
+// CreateModerationLog creates a new moderation log
+func (c *DBClient) CreateModerationLog(moderationLog *models.ModerationLog) error {
+	return c.DB.Create(moderationLog).Error
+}
+
+// GetModerationLogs retrieves all moderation logs
+func (c *DBClient) GetModerationLogs() ([]models.ModerationLog, error) {
+	var moderationLogs []models.ModerationLog
+	result := c.DB.Find(&moderationLogs)
+	return moderationLogs, result.Error
 }

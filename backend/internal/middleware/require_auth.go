@@ -2,15 +2,14 @@ package middleware
 
 import (
 	"fmt"
-	"net/http"
-	"os"
-	"strings"
-	"time"
-
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 )
 
 // Middleware holds the datastore
@@ -56,7 +55,7 @@ func (m *Middleware) RequireAuth(c *gin.Context) {
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 		return []byte(jwtSecret), nil
 	})

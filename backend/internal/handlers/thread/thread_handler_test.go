@@ -1,19 +1,19 @@
-package handlers
+package thread
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/handlers/auth"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/middleware"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/tests"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 func TestCreateThread(t *testing.T) {
@@ -23,11 +23,12 @@ func TestCreateThread(t *testing.T) {
 	testDB := &database.DBClient{DB: db}
 
 	h := NewHandler(testDB)
+	authHandler := auth.NewHandler(testDB)
 	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", h.Register)
-	r.POST("/login", h.Login)
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
 	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
 
 	// Register a user and get a token
@@ -44,8 +45,18 @@ func TestCreateThread(t *testing.T) {
 	r.ServeHTTP(w, req)
 	cookie := w.Header().Get("Set-Cookie")
 
+	// Create a test category first
+	category := models.Category{
+		Name:         "Test Category",
+		Description:  "Test Description",
+		Slug:         "test-category",
+		DisplayOrder: 1,
+		IsActive:     true,
+	}
+	testDB.CreateCategory(&category)
+
 	// Test case 1: Successful thread creation
-	threadJSON := `{"title": "My First Thread", "content": "This is the content of my first thread."}`
+	threadJSON := fmt.Sprintf(`{"title": "My First Thread", "content": "This is the content of my first thread.", "category_id": %d}`, category.ID)
 	req, _ = http.NewRequest(http.MethodPost, "/api/threads", bytes.NewBufferString(threadJSON))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Cookie", cookie)
@@ -71,11 +82,12 @@ func TestGetThreads(t *testing.T) {
 	testDB := &database.DBClient{DB: db}
 
 	h := NewHandler(testDB)
+	authHandler := auth.NewHandler(testDB)
 	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", h.Register)
-	r.POST("/login", h.Login)
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
 	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
 	r.GET("/api/threads", h.GetThreads)
 
@@ -116,11 +128,12 @@ func TestGetThread(t *testing.T) {
 	testDB := &database.DBClient{DB: db}
 
 	h := NewHandler(testDB)
+	authHandler := auth.NewHandler(testDB)
 	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", h.Register)
-	r.POST("/login", h.Login)
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
 	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
 	r.GET("/api/threads/:id", h.GetThread)
 
@@ -177,11 +190,12 @@ func TestUpdateThread(t *testing.T) {
 	testDB := &database.DBClient{DB: db}
 
 	h := NewHandler(testDB)
+	authHandler := auth.NewHandler(testDB)
 	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", h.Register)
-	r.POST("/login", h.Login)
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
 	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
 	r.PUT("/api/threads/:id", m.RequireAuth, h.UpdateThread)
 
@@ -252,11 +266,12 @@ func TestDeleteThread(t *testing.T) {
 	testDB := &database.DBClient{DB: db}
 
 	h := NewHandler(testDB)
+	authHandler := auth.NewHandler(testDB)
 	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", h.Register)
-	r.POST("/login", h.Login)
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
 	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
 	r.DELETE("/api/threads/:id", m.RequireAuth, h.DeleteThread)
 

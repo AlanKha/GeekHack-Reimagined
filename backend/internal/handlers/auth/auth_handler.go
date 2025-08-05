@@ -1,26 +1,26 @@
-package handlers
+package auth
 
 import (
-	"net/http"
-	"os"
-	"time"
-
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/handlers/common"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
+	"net/http"
+	"os"
+	"time"
 )
 
 // Handler holds the datastore
 type Handler struct {
-	DB database.Datastore
+	*common.Handler
 }
 
 // NewHandler creates a new handler
 func NewHandler(db database.Datastore) *Handler {
-	return &Handler{DB: db}
+	return &Handler{common.NewHandler(db)}
 }
 
 func (h *Handler) Register(c *gin.Context) {
@@ -42,7 +42,13 @@ func (h *Handler) Register(c *gin.Context) {
 		return
 	}
 
-	user := models.User{Username: body.Username, Email: body.Email, Password: string(hash)}
+	user := models.User{
+		Username: body.Username,
+		Email:    body.Email,
+		Password: string(hash),
+		JoinedAt: time.Now(),
+		LastSeen: time.Now(),
+	}
 	err = h.DB.CreateUser(&user)
 
 	if err != nil {
@@ -77,6 +83,10 @@ func (h *Handler) Login(c *gin.Context) {
 		utils.RespondWithError(c, http.StatusBadRequest, "Invalid username or password")
 		return
 	}
+
+	// Update last seen time
+	user.LastSeen = time.Now()
+	h.DB.UpdateUser(user) // You'll need to add this method to datastore
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"sub": user.Email,

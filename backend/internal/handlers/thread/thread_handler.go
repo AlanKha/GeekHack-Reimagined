@@ -1,18 +1,31 @@
-package handlers
+package thread
 
 import (
-	"net/http"
-	"strconv"
-
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/handlers/common"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/utils"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
+	"time"
 )
+
+// Handler holds the datastore
+type Handler struct {
+	*common.Handler
+}
+
+// NewHandler creates a new handler
+func NewHandler(db database.Datastore) *Handler {
+	return &Handler{common.NewHandler(db)}
+}
 
 func (h *Handler) CreateThread(c *gin.Context) {
 	var body struct {
-		Title   string
-		Content string
+		Title      string
+		Content    string
+		CategoryID uint
 	}
 
 	if c.Bind(&body) != nil {
@@ -21,11 +34,17 @@ func (h *Handler) CreateThread(c *gin.Context) {
 	}
 
 	user, _ := c.Get("user")
+	now := time.Now()
 
 	thread := models.Thread{
-		Title:   body.Title,
-		Content: body.Content,
-		UserID:  user.(*models.User).ID,
+		Title:        body.Title,
+		Content:      body.Content,
+		UserID:       user.(*models.User).ID,
+		CategoryID:   body.CategoryID,
+		PostCount:    1, // Original post counts as 1
+		ReplyCount:   0,
+		LastActivity: now,
+		IsActive:     true,
 	}
 
 	err := h.DB.CreateThread(&thread)
@@ -35,7 +54,7 @@ func (h *Handler) CreateThread(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"message": "Thread created", "thread": thread})
+	c.JSON(http.StatusCreated, gin.H{"message": "Thread created", "thread": thread.ToSummary()})
 }
 
 func (h *Handler) GetThreads(c *gin.Context) {
@@ -45,7 +64,13 @@ func (h *Handler) GetThreads(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"threads": threads})
+	// Convert to DTOs for optimized response
+	summaries := make([]models.ThreadSummary, len(threads))
+	for i, thread := range threads {
+		summaries[i] = thread.ToSummary()
+	}
+
+	c.JSON(http.StatusOK, gin.H{"threads": summaries})
 }
 
 func (h *Handler) GetThread(c *gin.Context) {

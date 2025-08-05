@@ -1,12 +1,11 @@
 package tests
 
 import (
-	"os"
-	"testing"
-
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"os"
+	"testing"
 )
 
 func SetupTestDB(t *testing.T) (*gorm.DB, func()) {
@@ -17,7 +16,17 @@ func SetupTestDB(t *testing.T) (*gorm.DB, func()) {
 	if err != nil {
 		t.Fatalf("Failed to connect to test database: %v", err)
 	}
-	db.AutoMigrate(&models.User{}, &models.Thread{}, &models.Post{})
+	db.AutoMigrate(
+		&models.User{},
+		&models.Category{},
+		&models.Thread{},
+		&models.Post{},
+		&models.Reaction{},
+		&models.ModerationLog{},
+		&models.UserSession{},
+		&models.ThreadSubscription{},
+		&models.Notification{},
+	)
 
 	teardown := func() {
 		os.Unsetenv("JWT_SECRET")

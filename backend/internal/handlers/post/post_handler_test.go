@@ -1,19 +1,20 @@
-package handlers
+package post
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/http/httptest"
-	"testing"
-
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/handlers/auth"
+	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/handlers/thread"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/middleware"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/tests"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 func TestCreatePost(t *testing.T) {
@@ -23,12 +24,14 @@ func TestCreatePost(t *testing.T) {
 	testDB := &database.DBClient{DB: db}
 
 	h := NewHandler(testDB)
+	authHandler := auth.NewHandler(testDB)
+	threadHandler := thread.NewHandler(testDB)
 	m := middleware.NewMiddleware(testDB)
 
 	r := gin.Default()
-	r.POST("/register", h.Register)
-	r.POST("/login", h.Login)
-	r.POST("/api/threads", m.RequireAuth, h.CreateThread)
+	r.POST("/register", authHandler.Register)
+	r.POST("/login", authHandler.Login)
+	r.POST("/api/threads", m.RequireAuth, threadHandler.CreateThread)
 	r.POST("/api/threads/:id/posts", m.RequireAuth, h.CreatePost)
 
 	// Register a user and get a token

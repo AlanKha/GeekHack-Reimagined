@@ -1,18 +1,17 @@
 package middleware
 
 import (
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"testing"
-	"time"
-
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/database"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/models"
 	"github.com/AlanKha/GeekHack-Reimagined/backend/internal/tests"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/stretchr/testify/assert"
+	"net/http"
+	"net/http/httptest"
+	"os"
+	"testing"
+	"time"
 )
 
 func TestRequireAuth(t *testing.T) {
