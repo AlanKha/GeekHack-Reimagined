@@ -73,17 +73,7 @@ type UserProfile struct {
 	IsActive        bool      `json:"is_active"`
 }
 
-// NotificationSummary for notification listings
-type NotificationSummary struct {
-	ID              uint             `json:"id"`
-	Type            NotificationType `json:"type"`
-	Title           string           `json:"title"`
-	Message         string           `json:"message"`
-	IsRead          bool             `json:"is_read"`
-	CreatedAt       time.Time        `json:"created_at"`
-	RelatedThreadID *uint            `json:"related_thread_id,omitempty"`
-	RelatedPostID   *uint            `json:"related_post_id,omitempty"`
-}
+
 
 // Pagination helper for API responses
 type PaginatedResponse struct {

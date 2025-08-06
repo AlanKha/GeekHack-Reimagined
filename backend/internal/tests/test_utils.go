@@ -24,8 +24,6 @@ func SetupTestDB(t *testing.T) (*gorm.DB, func()) {
 		&models.Reaction{},
 		&models.ModerationLog{},
 		&models.UserSession{},
-		&models.ThreadSubscription{},
-		&models.Notification{},
 	)
 
 	teardown := func() {

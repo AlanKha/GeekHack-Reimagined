@@ -27,7 +27,7 @@
 
 This project is structured as a monorepo to keep the frontend and backend code in a single, easy-to-manage repository.
 
-```
+```text
 geekhack-reimagined/
 ├── .github/              # GitHub Actions workflows
 ├── backend/              # Golang REST API
@@ -61,14 +61,14 @@ You must have the following software installed on your machine:
 
 ### Installation
 
-1. **Clone the repository:**
+**Clone the repository:**
 
 ```bash
 git clone https://github.com/AlanKha/GeekHack-Reimagined.git
 cd GeekHack-Reimagined
 ```
 
-2. **Configure Environment Variables:**
+**Configure Environment Variables:**
 
 Create a `.env` file in the project root by copying the example file. This file will be used by Docker Compose to configure all services.
 
@@ -78,7 +78,7 @@ cp .env.example .env
 
 Now, open the `.env` file and fill in the values. The defaults are suitable for local development.
 
-3. **Build and Run with Docker Compose:**
+**Build and Run with Docker Compose:**
 
 This single command will build the Docker images for the frontend and backend, start the PostgreSQL database container, and run the entire application.
 
@@ -88,8 +88,8 @@ docker-compose up --build
 
 You should now be able to access:
 
-- **Frontend Application**: http://localhost:3000
-- **Backend API**: http://localhost:8080
+- **Frontend Application**: <http://localhost:3000>
+- **Backend API**: <http://localhost:8080>
 
 ## 📋 To-Do List & Project Roadmap
 
@@ -111,13 +111,13 @@ This is the development plan. Check off items as they are completed.
 - [x] **Database Design**: Define GORM models for User, Thread, and Post
 - [x] Implement GORM AutoMigrate to create tables on startup
 
-#### User Authentication:
+#### User Authentication
 
 - [x] `/register` endpoint (hash password before saving)
 - [x] `/login` endpoint (verify credentials, issue JWT)
 - [x] JWT authentication middleware to protect routes
 
-#### Thread Endpoints (CRUD):
+#### Thread Endpoints (CRUD)
 
 - [x] `POST /api/threads` (Create, protected)
 - [x] `GET /api/threads` (Read all)
@@ -125,7 +125,7 @@ This is the development plan. Check off items as they are completed.
 - [x] `PUT /api/threads/:id` (Update, protected)
 - [x] `DELETE /api/threads/:id` (Delete, protected)
 
-#### Post Endpoints (CRUD):
+#### Post Endpoints (CRUD)
 
 - [x] `POST /api/threads/:id/posts` (Create, protected)
 - [x] `GET /api/posts/:id` (Read one, likely not needed)
@@ -139,28 +139,28 @@ This is the development plan. Check off items as they are completed.
 
 - [x] Initialize Next.js project in `/frontend` with TypeScript and Tailwind CSS
 
-#### Component Library:
+#### Component Library
 
 - [x] Build reusable UI components (Button, Input, Card, Navbar)
 - [x] **API Client**: Create a library in `/lib/api.ts` to handle all fetch requests to the backend
 
-#### Static Pages & Layout:
+#### Static Pages & Layout
 
 - [x] Create main application layout with Navbar and Footer
 - [x] Build Homepage (`/`) to fetch and display all threads
 - [x] Build `/login` and `/register` pages with forms
 
-#### Dynamic Pages:
+#### Dynamic Pages
 
 - [ ] Build Thread Detail page (`/thread/[id]`) to fetch and display a single thread and its posts
 
-#### Authentication Flow:
+#### Authentication Flow
 
 - [ ] Create a React Context for managing authentication state
 - [ ] On login, store JWT securely (HttpOnly cookie)
 - [ ] Create protected routes/components that are only visible to logged-in users
 
-#### User Interaction:
+#### User Interaction
 
 - [ ] Build form for creating new threads
 - [ ] Build form for creating new posts/replies within a thread
@@ -181,7 +181,6 @@ This is the development plan. Check off items as they are completed.
 - [ ] User Profiles
 - [ ] Markdown support for posts with preview
 - [ ] Pagination for threads and posts
-- [ ] Real-time notifications (e.g., using WebSockets)
 - [ ] Full-text search functionality
 - [ ] Admin roles and moderation tools
 

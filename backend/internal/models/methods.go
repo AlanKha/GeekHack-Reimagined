@@ -117,23 +117,7 @@ func (c *Category) IncrementCounts(db *gorm.DB, threadCount, postCount int) erro
 	}).Error
 }
 
-// Notification methods
-func (n *Notification) ToSummary() NotificationSummary {
-	return NotificationSummary{
-		ID:              n.ID,
-		Type:            n.Type,
-		Title:           n.Title,
-		Message:         n.Message,
-		IsRead:          n.IsRead,
-		CreatedAt:       n.CreatedAt,
-		RelatedThreadID: n.RelatedThreadID,
-		RelatedPostID:   n.RelatedPostID,
-	}
-}
 
-func (n *Notification) MarkAsRead(db *gorm.DB) error {
-	return db.Model(n).Update("is_read", true).Error
-}
 
 // Reaction methods
 func (r *Reaction) IsPositive() bool {

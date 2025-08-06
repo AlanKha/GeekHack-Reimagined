@@ -24,8 +24,6 @@ backend/
 │   │   ├───{auth,thread,post, etc.}/
 │   │   │   ├───{X}_handler.go    # Enhanced with session support
 │   │   │   └───{X}_handler_test.go
-│   │   ├───notification/
-│   │   │   └───notification_handler.go # New notification system
 │   │   ├───common/
 │   │   │   └───common_handler.go
 │   │   └───forum_handler.go       # New forum statistics
@@ -40,7 +38,6 @@ backend/
 │   │   ├───reaction.go           # Type-safe enums
 │   │   ├───moderation_log.go     # Comprehensive audit trail
 │   │   ├───user_session.go       # New session management
-│   │   ├───notification.go       # New notification system
 │   │   ├───dto.go                # Optimized response objects
 │   │   └───methods.go            # Business logic helpers
 │   ├───tests/                    # Test utilities
@@ -67,7 +64,6 @@ backend/
 ### New Models
 
 - **UserSession** - Secure session management with IP tracking
-- **Notification** - User notification system
 - **ThreadSubscription** - Thread watching/subscription system
 - **ModerationLog** - Comprehensive moderation audit trail
 
@@ -80,7 +76,6 @@ Optimized data transfer objects for better performance:
 - **ThreadSummary** - Thread listings with user/category info
 - **ThreadDetail** - Full thread data with content
 - **PostSummary** - Post data with user info
-- **NotificationSummary** - User notifications
 - **PaginatedResponse** - Consistent pagination wrapper
 
 ## API Endpoints
@@ -352,40 +347,7 @@ Optimized data transfer objects for better performance:
   - **Query:** `?page=1&per_page=20`
   - **Auth:** None
   - **Response:** Paginated thread listings
-
-### Notifications (New)
-
-- **Get User Notifications**
-
-  - **Method:** `GET`
-  - **Path:** `/api/notifications`
-  - **Query:** `?page=1&per_page=20&unread=true`
-  - **Auth:** Required
-  - **Response:** Paginated notifications
-
-- **Mark Notification Read**
-
-  - **Method:** `PUT`
-  - **Path:** `/api/notifications/:id/read`
-  - **Auth:** Required
-
-- **Mark All Notifications Read**
-
-  - **Method:** `PUT`
-  - **Path:** `/api/notifications/read-all`
-  - **Auth:** Required
-
-- **Subscribe to Thread**
-
-  - **Method:** `POST`
-  - **Path:** `/api/threads/:id/subscribe`
-  - **Auth:** Required
-
-- **Unsubscribe from Thread**
-  - **Method:** `DELETE`
-  - **Path:** `/api/threads/:id/subscribe`
-  - **Auth:** Required
-
+  
 ## 🏗️ Architecture Features
 
 ### Performance Optimizations
@@ -423,7 +385,7 @@ The backend includes comprehensive test coverage:
 
 **Test Results:**
 
-```
+```text
 ✅ Auth Handler:          2/2 tests passing
 ✅ Category Handler:      2/2 tests passing  
 ✅ Thread Handler:        5/5 tests passing
@@ -519,7 +481,6 @@ The following indexes are recommended for production (see `database_optimization
 
 ### Planned Features
 
-- **Real-time Notifications**: WebSocket integration
 - **Advanced Search**: Full-text search with ranking
 - **File Uploads**: Image and attachment support
 - **Rate Limiting**: API request throttling
@@ -534,4 +495,4 @@ The following indexes are recommended for production (see `database_optimization
 
 ---
 
-**Built with ❤️ for high-performance forum applications**
+Built with ❤️ for high-performance forum applications

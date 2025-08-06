@@ -12,7 +12,7 @@ Represents a user account in the system.
 | :--- | :--- | :--- |
 | `ID` | `uint` | Primary key. |
 | `Username` | `string` | Unique username for login and display. |
-| `Email` | `string` | Unique email for login and notifications. |
+| `Email` | `string` | Unique email for login. |
 | `Password` | `string` | Hashed password. |
 | `AvatarURL` | `string` | URL to the user's avatar image. |
 | `Signature` | `string` | User's forum signature, displayed below their posts. |
@@ -105,33 +105,6 @@ Represents an active user session for authentication and tracking.
 | `UserAgent` | `string` | The user agent of the client. |
 | `IsActive` | `bool` | Whether the session is currently active. |
 | `LastActivity` | `time.Time` | Timestamp of the last activity within the session. |
-
-### `Notification` (`notification.go`)
-
-Represents a notification sent to a user.
-
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `ID` | `uint` | Primary key. |
-| `UserID` | `uint` | Foreign key for the user receiving the notification. |
-| `Type` | `NotificationType` | The type of notification (e.g., 'new_post', 'mention'). |
-| `Title` | `string` | The title of the notification. |
-| `Message` | `string` | The content of the notification. |
-| `IsRead` | `bool` | Whether the user has read the notification. |
-| `RelatedThreadID` | `*uint` | Optional foreign key to a related thread. |
-| `RelatedPostID` | `*uint` | Optional foreign key to a related post. |
-| `RelatedUserID` | `*uint` | Optional foreign key to a related user (e.g., for mentions). |
-
-### `ThreadSubscription` (`notification.go`)
-
-Represents a user's subscription to a thread to receive notifications for new posts.
-
-| Field | Type | Description |
-| :--- | :--- | :--- |
-| `ID` | `uint` | Primary key. |
-| `UserID` | `uint` | Foreign key for the subscribing user. |
-| `ThreadID` | `uint` | Foreign key for the subscribed-to thread. |
-| `IsActive` | `bool` | Whether the subscription is active. |
 
 ### `ModerationLog` (`moderation_log.go`)
 

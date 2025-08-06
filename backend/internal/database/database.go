@@ -35,8 +35,6 @@ func NewDBClient() (Datastore, error) {
 		&models.Reaction{},
 		&models.ModerationLog{},
 		&models.UserSession{},
-		&models.ThreadSubscription{},
-		&models.Notification{},
 	)
 	if err != nil {
 		return nil, err
